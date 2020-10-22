@@ -1,0 +1,1 @@
+python tools/test.py configs/pspnet/pspnet_r50-d8_512x512_80k_ade20k.py checkpoints/pspnet_r50-d8_512x512_80k_ade20k_20200615_014128-15a8b914.pth --show

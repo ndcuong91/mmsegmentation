@@ -15,10 +15,13 @@ from mmseg.datasets import build_dataset
 from mmseg.models import build_segmentor
 from mmseg.utils import collect_env, get_root_logger
 
-
+config_file='/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/configs/' \
+            'pspnet/pspnet_r50-d8_480x480_40k_table_structure1.py'
+# config_file='/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/configs/' \
+#             'pspnet/pspnet_r50-d8_512x512_80k_ade20k.py'
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a segmentor')
-    parser.add_argument('config', help='train config file path')
+    parser.add_argument('--config', help='train config file path', default=config_file)
     parser.add_argument('--work-dir', help='the dir to save logs and models')
     parser.add_argument(
         '--load-from', help='the checkpoint file to load weights from')
