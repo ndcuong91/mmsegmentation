@@ -1,5 +1,6 @@
 import argparse
 import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 
 import mmcv
 import torch
@@ -12,13 +13,19 @@ from mmseg.datasets import build_dataloader, build_dataset
 from mmseg.models import build_segmentor
 
 
+config='../configs/fastscnn/fast_scnn_4x8_80k_lr0.12_publaynet_split1.py'
+ckpt='../work_dirs/fast_scnn_4x8_80k_lr0.12_publaynet_split1/iter_32000.pth'
+show=False
+eval = 'mIoU' #mIoU
+aug_test=False
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description='mmseg test (and eval) a model')
-    parser.add_argument('config', help='test config file path')
-    parser.add_argument('checkpoint', help='checkpoint file')
+    parser.add_argument('--config', help='test config file path', default=config)
+    parser.add_argument('--checkpoint', help='checkpoint file', default=ckpt)
     parser.add_argument(
-        '--aug-test', action='store_true', help='Use Flip and Multi scale aug')
+        '--aug-test', default=aug_test, help='Use Flip and Multi scale aug')
     parser.add_argument('--out', help='output result file in pickle format')
     parser.add_argument(
         '--format-only',
@@ -30,9 +37,10 @@ def parse_args():
         '--eval',
         type=str,
         nargs='+',
+        default=eval,
         help='evaluation metrics, which depends on the dataset, e.g., "mIoU"'
         ' for generic datasets, and "cityscapes" for Cityscapes')
-    parser.add_argument('--show', action='store_true', help='show results')
+    parser.add_argument('--show', default=show, help='show results')
     parser.add_argument(
         '--show-dir', help='directory where painted images will be saved')
     parser.add_argument(
@@ -125,7 +133,7 @@ def main():
             broadcast_buffers=False)
         outputs = multi_gpu_test(model, data_loader, args.tmpdir,
                                  args.gpu_collect)
-
+    print('eval',args.eval)
     rank, _ = get_dist_info()
     if rank == 0:
         if args.out:

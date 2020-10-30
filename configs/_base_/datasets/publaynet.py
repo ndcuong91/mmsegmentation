@@ -1,6 +1,6 @@
 # dataset settings
-dataset_type = 'table_structure1Dataset'
-data_root = '/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/data/table_structure1'
+dataset_type = 'publaynetDataset'
+data_root = '/data4T/ntanh'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 crop_size = (512, 512)
@@ -37,18 +37,18 @@ data = dict(
     train=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='img_dir/train',
-        ann_dir='ann_dir/train',
+        img_dir='publaynet/train',
+        ann_dir='publaynet_gen_gt_oct2.1/train/label',
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='img_dir/val',
-        ann_dir='ann_dir/val',
+        img_dir='publaynet/val',
+        ann_dir='publaynet_gen_gt_oct2.1/val/label',
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='img_dir/val',
-        ann_dir='ann_dir/val',
+        img_dir='publaynet/val',
+        ann_dir='publaynet_gen_gt_oct2.1/val/label',
         pipeline=test_pipeline))

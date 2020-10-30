@@ -1,1 +1,2 @@
-python tools/test.py configs/pspnet/pspnet_r50-d8_512x512_80k_ade20k.py checkpoints/pspnet_r50-d8_512x512_80k_ade20k_20200615_014128-15a8b914.pth --show
+#python tools/test.py configs/pspnet/pspnet_r50-d8_480x480_20k_table_structure1.py work_dirs/pspnet_r50-d8_480x480_20k_table_structure1/iter_2000.pth --show
+python demo/image_demo.py   work_dirs/pspnet_r50-d8_480x480_20k_table_structure1/iter_20000.pth --device cuda:0

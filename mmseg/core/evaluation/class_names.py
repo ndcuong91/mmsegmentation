@@ -136,17 +136,20 @@ def get_classes(dataset):
 
 
 def get_palette(dataset):
-    """Get class palette (RGB) of a dataset."""
-    alias2name = {}
-    for name, aliases in dataset_aliases.items():
-        for alias in aliases:
-            alias2name[alias] = name
+    if dataset is not None:
+        """Get class palette (RGB) of a dataset."""
+        alias2name = {}
+        for name, aliases in dataset_aliases.items():
+            for alias in aliases:
+                alias2name[alias] = name
 
-    if mmcv.is_str(dataset):
-        if dataset in alias2name:
-            labels = eval(alias2name[dataset] + '_palette()')
+        if mmcv.is_str(dataset):
+            if dataset in alias2name:
+                labels = eval(alias2name[dataset] + '_palette()')
+            else:
+                raise ValueError(f'Unrecognized dataset: {dataset}')
         else:
-            raise ValueError(f'Unrecognized dataset: {dataset}')
+            raise TypeError(f'dataset must a str, but got {type(dataset)}')
+        return labels
     else:
-        raise TypeError(f'dataset must a str, but got {type(dataset)}')
-    return labels
+        return None

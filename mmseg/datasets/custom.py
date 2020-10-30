@@ -322,7 +322,6 @@ class CustomDataset(Dataset):
         Returns:
             dict[str, float]: Default metrics.
         """
-
         if not isinstance(metric, str):
             assert len(metric) == 1
             metric = metric[0]
@@ -339,7 +338,7 @@ class CustomDataset(Dataset):
             num_classes = len(self.CLASSES)
 
         all_acc, acc, iou = mean_iou(
-            results, gt_seg_maps, num_classes, ignore_index=self.ignore_index)
+            results, gt_seg_maps, num_classes, ignore_index=self.ignore_index, nan_to_num=-1)
         summary_str = ''
         summary_str += 'per class results:\n'
 

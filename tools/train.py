@@ -15,18 +15,26 @@ from mmseg.datasets import build_dataset
 from mmseg.models import build_segmentor
 from mmseg.utils import collect_env, get_root_logger
 
-config_file='/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/configs/' \
-            'pspnet/pspnet_r50-d8_480x480_40k_table_structure1.py'
-# config_file='/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/configs/' \
-#             'pspnet/pspnet_r50-d8_512x512_80k_ade20k.py'
+config_file = '/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/configs/' \
+              'pspnet/pspnet_r50-d8_512x512_20k_publaynet.py'
+config_file = '/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/configs/' \
+              'fastscnn/fast_scnn_4x8_320k_lr0.12_publaynet.py'
+# config_file = '/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/configs/' \
+#               'pspnet/pspnet_r50-d8_512x512_80k_publaynet_split1.py'
+resume_from = 'work_dirs/fast_scnn_4x8_80k_lr0.12_publaynet_split1/iter_16000.pth'
+resume_from = None
+load_from = 'checkpoints/pspnet_r50-d8_512x512_80k_ade20k_20200615_014128-15a8b914.pth'
+load_from = None
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a segmentor')
     parser.add_argument('--config', help='train config file path', default=config_file)
     parser.add_argument('--work-dir', help='the dir to save logs and models')
     parser.add_argument(
-        '--load-from', help='the checkpoint file to load weights from')
+        '--load-from', help='the checkpoint file to load weights from', default=load_from)
     parser.add_argument(
-        '--resume-from', help='the checkpoint file to resume from')
+        '--resume-from', help='the checkpoint file to resume from', default=resume_from)
     parser.add_argument(
         '--no-validate',
         action='store_true',
@@ -36,13 +44,13 @@ def parse_args():
         '--gpus',
         type=int,
         help='number of gpus to use '
-        '(only applicable to non-distributed training)')
+             '(only applicable to non-distributed training)')
     group_gpus.add_argument(
         '--gpu-ids',
         type=int,
         nargs='+',
         help='ids of gpus to use '
-        '(only applicable to non-distributed training)')
+             '(only applicable to non-distributed training)')
     parser.add_argument('--seed', type=int, default=None, help='random seed')
     parser.add_argument(
         '--deterministic',

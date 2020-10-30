@@ -6,11 +6,11 @@ from .custom import CustomDataset
 class table_structure1Dataset(CustomDataset):
     """table_structure1
     """
-    CLASSES = ('background', 'cell')
-    PALETTE = [[120, 120, 120], [6, 230, 230]]
+    CLASSES = ('background','cell')
+    PALETTE = [[120, 0, 0],[0, 120, 0]]
     def __init__(self, **kwargs):
         super(table_structure1Dataset, self).__init__(
             img_suffix='.png',
             seg_map_suffix='.png',
-            reduce_zero_label=True,
+            reduce_zero_label=False,
             **kwargs)

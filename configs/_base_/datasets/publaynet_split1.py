@@ -1,6 +1,6 @@
 # dataset settings
-dataset_type = 'table_structure1Dataset'
-data_root = '/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/data/table_structure1'
+dataset_type = 'publaynet_split1Dataset'
+data_root = '/data20.04/data/doc_structure/publaynet'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 crop_size = (512, 512)
@@ -33,7 +33,7 @@ test_pipeline = [
 ]
 data = dict(
     samples_per_gpu=4,
-    workers_per_gpu=4,
+    workers_per_gpu=8,
     train=dict(
         type=dataset_type,
         data_root=data_root,
