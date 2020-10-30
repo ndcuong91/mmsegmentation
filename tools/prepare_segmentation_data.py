@@ -1,5 +1,6 @@
 import os, cv2
 import numpy as np
+import random, shutil
 
 def get_list_file_in_folder(dir, ext=['jpg', 'png', 'JPG', 'PNG']):
     included_extensions = ext
@@ -73,7 +74,6 @@ def convert_anno_objective2_to_segmentation(img_dir, anno_det_dir, output_anno_s
         cv2.imwrite(os.path.join(output_anno_segment_dir,img_name),anno_mask)
         print('ok')
 
-import random, shutil
 def split_dataset(img_dir, ann_dir, img_dst_dir, ann_dst_dir, ratio=0.5):
     list_images = get_list_file_in_folder(img_dir)
     random.shuffle(list_images)
@@ -96,10 +96,23 @@ def del_dataset(img_dir, ann_dir):
         ann_path=os.path.join(ann_dir,img_name.replace('.jpg','.png'))
         if not os.path.exists(ann_path):
             os.remove(os.path.join(img_dir,img_name))
-            kk=1
     print('Done')
 
 
+def refine_dataset(img_dir, ann_dir):
+    list_images = get_list_file_in_folder(img_dir)
+    parent_dir=os.path.dirname(img_dir)
+    output_dir=os.path.join(parent_dir,'img_wo_anno')
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    for idx, file in enumerate(list_images):
+        img_path=os.path.join(img_dir,file)
+        anno_file= os.path.join(ann_dir, file.replace('.jpg','.png'))
+        if not os.path.exists(anno_file):
+            print(idx, file)
+            print('----------------------------------------------------------------------------------')
+            shutil.move(img_path,os.path.join(output_dir,file))
+            kk=1
 
 
 if __name__=='__main__':
@@ -118,8 +131,11 @@ if __name__=='__main__':
     #               ann_dst_dir='/data20.04/data/doc_structure/publaynet/ann_dir/train',
     #               ratio=0.5)
 
-    del_dataset(img_dir='/data20.04/data/doc_structure/publaynet/img_dir/train',
-                ann_dir='/data20.04/data/doc_structure/publaynet/ann_dir/train')
+    # del_dataset(img_dir='/data20.04/data/doc_structure/publaynet/img_dir/train',
+    #             ann_dir='/data20.04/data/doc_structure/publaynet/ann_dir/train')
+
+    refine_dataset(img_dir='/data4T/ntanh/publaynet/train',
+                ann_dir='/data4T/ntanh/publaynet_gen_gt_oct2.1/train/label')
 
 
 
