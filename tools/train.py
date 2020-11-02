@@ -4,6 +4,7 @@ import os
 import os.path as osp
 import time
 
+os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 import mmcv
 import torch
 from mmcv.runner import init_dist
