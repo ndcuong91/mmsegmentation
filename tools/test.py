@@ -1,6 +1,6 @@
 import argparse
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+os.environ['CUDA_VISIBLE_DEVICES'] = None
 
 import mmcv
 import torch
@@ -13,11 +13,14 @@ from mmseg.datasets import build_dataloader, build_dataset
 from mmseg.models import build_segmentor
 
 
-config='../configs/fastscnn/fast_scnn_4x8_80k_lr0.12_publaynet_split1.py'
-ckpt='../work_dirs/fast_scnn_4x8_80k_lr0.12_publaynet_split1/iter_32000.pth'
+config='/data4T/cuongnd/open-mmlab/mmsegmentation/configs/fastscnn/fast_scnn_4x8_20k_lr0.12_doc_structure1.py'
+ckpt='/data4T/cuongnd/open-mmlab/mmsegmentation/tools/work_dirs/fast_scnn_4x8_80k_lr0.12_doc_structure1/iter_20000.pth'
 show=False
+save_dir='/data4T/cuongnd/open-mmlab/mmsegmentation/output'
 eval = 'mIoU' #mIoU
+eval = None
 aug_test=False
+format_only=False
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -29,7 +32,7 @@ def parse_args():
     parser.add_argument('--out', help='output result file in pickle format')
     parser.add_argument(
         '--format-only',
-        action='store_true',
+        default=format_only,
         help='Format the output results without perform evaluation. It is'
         'useful when you want to format the result to a specific format and '
         'submit it to the test server')
@@ -42,7 +45,7 @@ def parse_args():
         ' for generic datasets, and "cityscapes" for Cityscapes')
     parser.add_argument('--show', default=show, help='show results')
     parser.add_argument(
-        '--show-dir', help='directory where painted images will be saved')
+        '--show-dir', help='directory where painted images will be saved', default=save_dir)
     parser.add_argument(
         '--gpu-collect',
         action='store_true',
@@ -68,7 +71,6 @@ def parse_args():
     if 'LOCAL_RANK' not in os.environ:
         os.environ['LOCAL_RANK'] = str(args.local_rank)
     return args
-
 
 def main():
     args = parse_args()

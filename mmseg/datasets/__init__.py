@@ -8,10 +8,11 @@ from .voc import PascalVOCDataset
 from .table_structure1 import table_structure1Dataset
 from .publaynet import publaynetDataset
 from .publaynet_split1 import publaynet_split1Dataset
+from .doc_structure1 import doc_structure1Dataset
 
 __all__ = [
     'CustomDataset', 'build_dataloader', 'ConcatDataset', 'RepeatDataset',
     'DATASETS', 'build_dataset', 'PIPELINES', 'CityscapesDataset',
     'PascalVOCDataset', 'ADE20KDataset', 'PascalContextDataset', 'table_structure1Dataset',
-    'publaynetDataset','publaynet_split1Dataset'
+    'publaynetDataset','publaynet_split1Dataset', 'doc_structure1Dataset'
 ]

@@ -53,6 +53,17 @@ def train_segmentor(model,
             drop_last=True) for ds in dataset
     ]
 
+    #test transformation of dataset
+    # import cv2
+    # with torch.no_grad():
+    #     for n, data in enumerate(data_loaders[0]):
+    #         sample_img=data['img'].data[0][0]
+    #         cv_img = sample_img.permute(1, 2, 0).numpy()
+    #         cv_img_convert = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
+    #         print(cv_img_convert.shape)
+    #         cv2.imshow('image data', cv_img_convert)
+    #         ch = cv2.waitKey(0)
+
     # put model on gpus
     if distributed:
         find_unused_parameters = cfg.get('find_unused_parameters', False)

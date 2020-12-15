@@ -115,3 +115,5 @@ work_dirs/
 
 # Pytorch
 *.pth
+output/AICRv13_res_fast_SCNN.zip
+output/publaynet_fast_SCNN.zip
