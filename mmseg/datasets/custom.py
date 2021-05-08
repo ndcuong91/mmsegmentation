@@ -1,12 +1,15 @@
+import os
 import os.path as osp
+from collections import OrderedDict
 from functools import reduce
 
 import mmcv
 import numpy as np
 from mmcv.utils import print_log
+from prettytable import PrettyTable
 from torch.utils.data import Dataset
 
-from mmseg.core import mean_iou
+from mmseg.core import eval_metrics
 from mmseg.utils import get_root_logger
 from .builder import DATASETS
 from .pipelines import Compose
@@ -14,9 +17,8 @@ from .pipelines import Compose
 
 @DATASETS.register_module()
 class CustomDataset(Dataset):
-    """Custom dataset for semantic segmentation.
-
-    An example of file structure is as followed.
+    """Custom dataset for semantic segmentation. An example of file structure
+    is as followed.
 
     .. code-block:: none
 
@@ -213,8 +215,8 @@ class CustomDataset(Dataset):
             idx (int): Index of data.
 
         Returns:
-            dict: Testing data after pipeline with new keys intorduced by
-                piepline.
+            dict: Testing data after pipeline with new keys introduced by
+                pipeline.
         """
 
         img_info = self.img_infos[idx]
@@ -224,27 +226,18 @@ class CustomDataset(Dataset):
 
     def format_results(self, results, **kwargs):
         """Place holder to format result to dataset specific output."""
-        pass
 
-    def get_gt_seg_maps(self):
+    def get_gt_seg_maps(self, efficient_test=False):
         """Get ground truth segmentation maps for evaluation."""
         gt_seg_maps = []
         for img_info in self.img_infos:
             seg_map = osp.join(self.ann_dir, img_info['ann']['seg_map'])
-            gt_seg_map = mmcv.imread(
-                seg_map, flag='unchanged', backend='pillow')
-            # modify if custom classes
-            if self.label_map is not None:
-                for old_id, new_id in self.label_map.items():
-                    gt_seg_map[gt_seg_map == old_id] = new_id
-            if self.reduce_zero_label:
-                # avoid using underflow conversion
-                gt_seg_map[gt_seg_map == 0] = 255
-                gt_seg_map = gt_seg_map - 1
-                gt_seg_map[gt_seg_map == 254] = 255
-
+            if efficient_test:
+                gt_seg_map = seg_map
+            else:
+                gt_seg_map = mmcv.imread(
+                    seg_map, flag='unchanged', backend='pillow')
             gt_seg_maps.append(gt_seg_map)
-
         return gt_seg_maps
 
     def get_classes_and_palette(self, classes=None, palette=None):
@@ -310,61 +303,98 @@ class CustomDataset(Dataset):
 
         return palette
 
-    def evaluate(self, results, metric='mIoU', logger=None, **kwargs):
+    def evaluate(self,
+                 results,
+                 metric='mIoU',
+                 logger=None,
+                 efficient_test=False,
+                 **kwargs):
         """Evaluate the dataset.
 
         Args:
             results (list): Testing results of the dataset.
-            metric (str | list[str]): Metrics to be evaluated.
+            metric (str | list[str]): Metrics to be evaluated. 'mIoU',
+                'mDice' and 'mFscore' are supported.
             logger (logging.Logger | None | str): Logger used for printing
                 related information during evaluation. Default: None.
 
         Returns:
             dict[str, float]: Default metrics.
         """
-        if not isinstance(metric, str):
-            assert len(metric) == 1
-            metric = metric[0]
-        allowed_metrics = ['mIoU']
-        if metric not in allowed_metrics:
-            raise KeyError('metric {} is not supported'.format(metric))
 
+        if isinstance(metric, str):
+            metric = [metric]
+        allowed_metrics = ['mIoU', 'mDice', 'mFscore']
+        if not set(metric).issubset(set(allowed_metrics)):
+            raise KeyError('metric {} is not supported'.format(metric))
         eval_results = {}
-        gt_seg_maps = self.get_gt_seg_maps()
+        gt_seg_maps = self.get_gt_seg_maps(efficient_test)
         if self.CLASSES is None:
             num_classes = len(
                 reduce(np.union1d, [np.unique(_) for _ in gt_seg_maps]))
         else:
             num_classes = len(self.CLASSES)
+        ret_metrics = eval_metrics(
+            results,
+            gt_seg_maps,
+            num_classes,
+            self.ignore_index,
+            metric,
+            label_map=self.label_map,
+            reduce_zero_label=self.reduce_zero_label)
 
-        all_acc, acc, iou = mean_iou(
-            results, gt_seg_maps, num_classes, ignore_index=self.ignore_index, nan_to_num=-1)
-        summary_str = ''
-        summary_str += 'per class results:\n'
-
-        line_format = '{:<15} {:>10} {:>10}\n'
-        summary_str += line_format.format('Class', 'IoU', 'Acc')
         if self.CLASSES is None:
             class_names = tuple(range(num_classes))
         else:
             class_names = self.CLASSES
-        for i in range(num_classes):
-            iou_str = '{:.2f}'.format(iou[i] * 100)
-            acc_str = '{:.2f}'.format(acc[i] * 100)
-            summary_str += line_format.format(class_names[i], iou_str, acc_str)
-        summary_str += 'Summary:\n'
-        line_format = '{:<15} {:>10} {:>10} {:>10}\n'
-        summary_str += line_format.format('Scope', 'mIoU', 'mAcc', 'aAcc')
 
-        iou_str = '{:.2f}'.format(np.nanmean(iou) * 100)
-        acc_str = '{:.2f}'.format(np.nanmean(acc) * 100)
-        all_acc_str = '{:.2f}'.format(all_acc * 100)
-        summary_str += line_format.format('global', iou_str, acc_str,
-                                          all_acc_str)
-        print_log(summary_str, logger)
+        # summary table
+        ret_metrics_summary = OrderedDict({
+            ret_metric: np.round(np.nanmean(ret_metric_value) * 100, 2)
+            for ret_metric, ret_metric_value in ret_metrics.items()
+        })
 
-        eval_results['mIoU'] = np.nanmean(iou)
-        eval_results['mAcc'] = np.nanmean(acc)
-        eval_results['aAcc'] = all_acc
+        # each class table
+        ret_metrics.pop('aAcc', None)
+        ret_metrics_class = OrderedDict({
+            ret_metric: np.round(ret_metric_value * 100, 2)
+            for ret_metric, ret_metric_value in ret_metrics.items()
+        })
+        ret_metrics_class.update({'Class': class_names})
+        ret_metrics_class.move_to_end('Class', last=False)
 
+        # for logger
+        class_table_data = PrettyTable()
+        for key, val in ret_metrics_class.items():
+            class_table_data.add_column(key, val)
+
+        summary_table_data = PrettyTable()
+        for key, val in ret_metrics_summary.items():
+            if key == 'aAcc':
+                summary_table_data.add_column(key, [val])
+            else:
+                summary_table_data.add_column('m' + key, [val])
+
+        print_log('per class results:', logger)
+        print_log('\n' + class_table_data.get_string(), logger=logger)
+        print_log('Summary:', logger)
+        print_log('\n' + summary_table_data.get_string(), logger=logger)
+
+        # each metric dict
+        for key, value in ret_metrics_summary.items():
+            if key == 'aAcc':
+                eval_results[key] = value / 100.0
+            else:
+                eval_results['m' + key] = value / 100.0
+
+        ret_metrics_class.pop('Class', None)
+        for key, value in ret_metrics_class.items():
+            eval_results.update({
+                key + '.' + str(name): value[idx] / 100.0
+                for idx, name in enumerate(class_names)
+            })
+
+        if mmcv.is_list_of(results, str):
+            for file_name in results:
+                os.remove(file_name)
         return eval_results
