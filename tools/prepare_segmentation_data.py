@@ -232,8 +232,8 @@ def show_result(img,
 
 
 def visualize_normal_format_dataset(img_dir, ann_dir):
-    PALETTE = [[120, 120, 120], [255, 0, 0], [0, 255, 0], [0, 0, 255]]
-    PALETTE = [[120, 120, 120], [255, 0, 0], [0, 255, 0], [0, 0, 255], [0, 255, 255], [255, 0, 255]]
+    PALETTE = [[120,120,120],[255, 0, 0],[0, 255, 0],[0, 0, 255],[128, 64, 128], [244, 35, 232], [70, 70, 70], [102, 102, 156],
+               [190, 153, 153], [153, 153, 153]]
     ext = ['jpg', 'png', 'JPG', 'PNG']
     list_images = get_list_file_in_folder(img_dir)
     #list_images = sorted(list_images)
@@ -243,8 +243,11 @@ def visualize_normal_format_dataset(img_dir, ann_dir):
         #     continue
         img_path = os.path.join(img_dir, file)
         for e in ext:
-            file = file.replace(e, 'png')
+            file = file.replace('.'+e, '.png')
         ann_path = os.path.join(ann_dir, file)
+        if not os.path.exists(ann_path):
+            print('Anno file not exist!')
+            continue
 
         img_data=cv2.imread(img_path)
         ann_data=np.asarray(PIL.Image.open(ann_path))
@@ -289,8 +292,8 @@ if __name__=='__main__':
     #
     # refine_dataset(img_dir='/data4T/ntanh/publaynet/train',
     #             ann_dir='/data4T/ntanh/publaynet_gen_gt_oct2.1/train/label')
-    img_dir='/data4T/cuongnd/dataset/doc_structure1/img_dir/val'
-    ann_dir='/data4T/cuongnd/dataset/doc_structure1/ann_dir/val'
+    img_dir='/home/duycuong/home_data/mmlab/mmseg/popular_doc/images/train'
+    ann_dir='/home/duycuong/home_data/mmlab/mmseg/popular_doc/annotations/train'
     visualize_normal_format_dataset(img_dir=img_dir,
                                     ann_dir=ann_dir)
 

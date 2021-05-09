@@ -1,6 +1,7 @@
 import argparse
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = None
+
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 import mmcv
 import torch
@@ -13,15 +14,15 @@ from mmseg.apis import multi_gpu_test, single_gpu_test
 from mmseg.datasets import build_dataloader, build_dataset
 from mmseg.models import build_segmentor
 
-
-config='/data4T/cuongnd/open-mmlab/mmsegmentation/configs/fastscnn/fast_scnn_4x8_20k_lr0.12_doc_structure1.py'
-ckpt='/data4T/cuongnd/open-mmlab/mmsegmentation/tools/work_dirs/fast_scnn_4x8_80k_lr0.12_doc_structure1/iter_20000.pth'
-show=False
-save_dir='/data4T/cuongnd/open-mmlab/mmsegmentation/output'
-eval = 'mIoU' #mIoU
+config = '../configs/pspnet/pspnet_r50-d8_512x512_80k_popular_doc.py'
+ckpt = '../work_dirs/pspnet_r50-d8_512x512_80k_popular_doc/iter_24000.pth'
+show = True
+save_dir = '/home/duycuong/PycharmProjects/mmlab/mmsegmentation/work_dirs/pspnet_r50-d8_512x512_80k_popular_doc/viz'
+eval = 'mIoU'  # mIoU
 eval = None
-aug_test=False
-format_only=False
+aug_test = False
+format_only = False
+
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -35,15 +36,15 @@ def parse_args():
         '--format-only',
         default=format_only,
         help='Format the output results without perform evaluation. It is'
-        'useful when you want to format the result to a specific format and '
-        'submit it to the test server')
+             'useful when you want to format the result to a specific format and '
+             'submit it to the test server')
     parser.add_argument(
         '--eval',
         type=str,
         nargs='+',
         default=eval,
         help='evaluation metrics, which depends on the dataset, e.g., "mIoU"'
-        ' for generic datasets, and "cityscapes" for Cityscapes')
+             ' for generic datasets, and "cityscapes" for Cityscapes')
     parser.add_argument('--show', default=show, help='show results')
     parser.add_argument(
         '--show-dir', help='directory where painted images will be saved', default=save_dir)
@@ -54,7 +55,7 @@ def parse_args():
     parser.add_argument(
         '--tmpdir',
         help='tmp directory used for collecting results from multiple '
-        'workers, available when gpu_collect is not specified')
+             'workers, available when gpu_collect is not specified')
     parser.add_argument(
         '--options', nargs='+', action=DictAction, help='custom options')
     parser.add_argument(
@@ -78,11 +79,12 @@ def parse_args():
         os.environ['LOCAL_RANK'] = str(args.local_rank)
     return args
 
+
 def main():
     args = parse_args()
 
     assert args.out or args.eval or args.format_only or args.show \
-        or args.show_dir, \
+           or args.show_dir, \
         ('Please specify at least one operation (save/eval/format/show the '
          'results / save the results) with the argument "--out", "--eval"'
          ', "--format-only", "--show" or "--show-dir"')

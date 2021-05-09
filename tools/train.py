@@ -4,7 +4,7 @@ import os
 import os.path as osp
 import time
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 import mmcv
 import torch
 from mmcv.runner import init_dist
@@ -16,17 +16,12 @@ from mmseg.datasets import build_dataset
 from mmseg.models import build_segmentor
 from mmseg.utils import collect_env, get_root_logger
 
-config_file = '/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/configs/' \
-              'pspnet/pspnet_r50-d8_512x512_20k_publaynet.py'
-config_file = '/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/configs/' \
-              'fastscnn/fast_scnn_4x8_80k_lr0.12_doc_structure1.py'
-# config_file = '/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/configs/' \
-#               'fastscnn/fast_scnn_4x8_80k_lr0.12_publaynet_split1.py'
-config_file = '/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/configs/pspnet/pspnet_r50-d8_640x640_20k_doc_structure1.py'
+
+config_file = '/home/duycuong/PycharmProjects/mmlab/mmsegmentation/configs/pspnet/pspnet_r50-d8_512x512_80k_popular_doc.py'
 resume_from = 'work_dirs/fast_scnn_4x8_80k_lr0.12_publaynet_split1/iter_64000.pth'
-resume_from = None 
+resume_from = None
 load_from = '/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/tools/work_dirs/pspnet_r50-d8_960x960_80k_publaynet_split1/iter_80000.pth'
-#load_from = None
+load_from = None
 
 
 def parse_args():
