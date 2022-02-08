@@ -57,26 +57,6 @@ def convert_anno_detection_to_segmentation(img_dir, anno_det_dir, output_anno_se
             cv2.rectangle(anno_mask,(int(left)-extend,int(top)-extend),(int(right)+extend,int(bottom)+extend),1,-1)
         cv2.imwrite(os.path.join(output_anno_segment_dir,img_name),anno_mask)
 
-def convert_anno_objective2_to_segmentation(img_dir, anno_det_dir, output_anno_segment_dir, extend=-1, format_anno_det='icdar', class_list=dict()):
-    list_images = get_list_file_in_folder(img_dir)
-    list_images = sorted(list_images)
-    for idx, img_name in enumerate(list_images):
-        print(idx, img_name)
-        img_path=os.path.join(img_dir,img_name)
-        img = cv2.imread(img_path)
-        anno_mask =  np.zeros((img.shape[0], img.shape[1]), np.uint8)
-        anno_file = os.path.join(anno_det_dir,img_name.replace('.jpg','.json').replace('.png','.json'))
-
-        import json
-        with open(anno_file, "r") as anno:
-            anno_str = json.load(anno)
-
-        for i, line in enumerate(anno_str['cellboxes']):
-            left, top, right, bottom = line[0], line[1], line[2], line[3]
-            cv2.rectangle(anno_mask,(int(left)-extend,int(top)-extend),(int(right)+extend,int(bottom)+extend),1,-1)
-        cv2.imwrite(os.path.join(output_anno_segment_dir,img_name),anno_mask)
-        print('ok')
-
 def split_dataset(img_dir, ann_dir, img_dst_dir, ann_dst_dir, ratio=0.5):
     list_images = get_list_file_in_folder(img_dir)
     random.shuffle(list_images)
@@ -260,41 +240,20 @@ def visualize_normal_format_dataset(img_dir, ann_dir):
 
 
 if __name__=='__main__':
-    #img=cv2.imread('/home/cuongnd/PycharmProjects/aicr/source/mmsegmentation/data/ade/ADEChallengeData2016/annotations/validation/ADE_val_00000012.png', cv2.IMREAD_GRAYSCALE)
-
-    data_dir='/data20.04/data/table recognition/from_Korea/201012_172754_pubtabnet_valid_sample_objective#2'
-    img_dir= data_dir + '/images'
-    anno_det_dir=data_dir + '/annots'
-    output_anno_segment_dir=data_dir + '/annot_seg'
-
-
-    #convert_anno_objective2_to_segmentation(img_dir, anno_det_dir, output_anno_segment_dir)
-    #
     # split_dataset(img_dir='/data4T/cuongnd/dataset/publaynet_split1/img_dir/train',
     #               ann_dir='/data4T/cuongnd/dataset/publaynet_split1/ann_dir/train_3classes',
     #               img_dst_dir='/data4T/cuongnd/dataset/doc_structure1/img_dir/train',
     #               ann_dst_dir='/data4T/cuongnd/dataset/doc_structure1/ann_dir/train',
     #               ratio=0.002)
 
-    # del_dataset(img_dir='/data20.04/data/doc_structure/publaynet/img_dir/train',
-    #             ann_dir='/data20.04/data/doc_structure/publaynet/ann_dir/train')
-
-    src_anno_dir='/data4T/cuongnd/dataset/publaynet_split1/ann_dir/val'
-    dst_anno_dir='/data4T/cuongnd/dataset/publaynet_split1/ann_dir/val_3classes'
-    # refactor_classes_of_dataset(src_anno_dir, dst_anno_dir,
-    #                             src_classes=[1, 2, 3, 4, 5], #('text', 'title', 'list', 'table', 'figure')
-    #                             dst_classes=[1, 1, 3, 2, 1])
+    src_anno_dir='/data_backup/cuongnd/Viettel_freeform/MAFC/BHYT_origin/imgs/clean'
+    dst_anno_dir='/data_backup/cuongnd/mmseg/doc_seg/imgs/bhyt'
+    convert_all_imgs_to_jpg(src_anno_dir,dst_anno_dir)
 
 
-    #onvert_voc_label_to_normal_format(src_anno_dir,dst_anno_dir)
-
-    #convert_all_imgs_to_jpg(src_anno_dir,dst_anno_dir)
-    #
-    # refine_dataset(img_dir='/data4T/ntanh/publaynet/train',
-    #             ann_dir='/data4T/ntanh/publaynet_gen_gt_oct2.1/train/label')
-    img_dir='/home/duycuong/home_data/mmlab/mmseg/popular_doc/images/train'
-    ann_dir='/home/duycuong/home_data/mmlab/mmseg/popular_doc/annotations/train'
-    visualize_normal_format_dataset(img_dir=img_dir,
-                                    ann_dir=ann_dir)
+    # img_dir='/data_backup/cuongnd/mmseg/doc_seg_data/imgs/train'
+    # ann_dir='/data_backup/cuongnd/mmseg/doc_seg_data/anno/train'
+    # visualize_normal_format_dataset(img_dir=img_dir,
+    #                                 ann_dir=ann_dir)
 
 

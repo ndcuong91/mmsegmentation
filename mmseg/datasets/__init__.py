@@ -14,11 +14,12 @@ from .publaynet import publaynetDataset
 from .publaynet_split1 import publaynet_split1Dataset
 from .doc_structure1 import doc_structure1Dataset
 from .popular_doc import popular_docDataset
+from .doc_seg import doc_segDataset
 
 __all__ = [
     'CustomDataset', 'build_dataloader', 'ConcatDataset', 'RepeatDataset',
     'DATASETS', 'build_dataset', 'PIPELINES', 'CityscapesDataset',
     'PascalVOCDataset', 'ADE20KDataset', 'PascalContextDataset',
     'PascalContextDataset59', 'ChaseDB1Dataset', 'DRIVEDataset', 'HRFDataset',
-    'STAREDataset','popular_docDataset'
+    'STAREDataset','popular_docDataset','doc_segDataset'
 ]
