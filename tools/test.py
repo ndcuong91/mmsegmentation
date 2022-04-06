@@ -15,9 +15,9 @@ from mmseg.datasets import build_dataloader, build_dataset
 from mmseg.models import build_segmentor
 
 config = '../configs/fastscnn/fast_scnn_4x8_80k_lr0.12_doc_seg.py'
-ckpt = '../work_dirs/pspnet_r50-d8_512x512_80k_popular_doc/iter_24000.pth'
+ckpt = '../work_dirs/fast_scnn_4x8_20k_lr0.12_doc_seg/iter_20000.pth'
 show = True
-save_dir = '/home/duycuong/PycharmProjects/mmlab/mmsegmentation/work_dirs/pspnet_r50-d8_512x512_80k_popular_doc/viz'
+save_dir = '/data_backup/cuongnd/mmseg/doc_seg/viz/train'
 eval = 'mIoU'  # mIoU
 eval = None
 aug_test = False

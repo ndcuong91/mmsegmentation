@@ -211,12 +211,34 @@ def show_result(img,
         return img
 
 
-def visualize_normal_format_dataset(img_dir, ann_dir):
-    PALETTE = [[120,120,120],[255, 0, 0],[0, 255, 0],[0, 0, 255],[128, 64, 128], [244, 35, 232], [70, 70, 70], [102, 102, 156],
-               [190, 153, 153], [153, 153, 153]]
+def visualize_normal_format_dataset(img_dir, ann_dir, viz_dir = None):
+    PALETTE = [[120,120,120],
+               [255, 0, 0],
+               [0, 255, 0],
+               [0, 0, 255],
+               [128, 64, 128],
+               [244, 35, 232],
+               [70, 140, 70],
+               [0, 0, 180],
+               [0, 0, 180],
+               [190, 0, 153],
+               [100, 180, 120],
+               [128, 0, 0],
+               [0, 128, 0],
+               [0, 0, 128],
+               [255, 64, 64],
+               [200, 35, 100],
+               [140, 0, 70],
+               [200, 102, 102],
+               [153, 0, 153],
+               [30, 153, 20],
+               [150, 50, 50],
+               [150, 30, 250],
+               [60, 200, 60]
+               ]
     ext = ['jpg', 'png', 'JPG', 'PNG']
     list_images = get_list_file_in_folder(img_dir)
-    #list_images = sorted(list_images)
+    list_images = sorted(list_images)
     for idx, file in enumerate(list_images):
         print(idx, file)
         # if idx <200:
@@ -231,12 +253,15 @@ def visualize_normal_format_dataset(img_dir, ann_dir):
 
         img_data=cv2.imread(img_path)
         ann_data=np.asarray(PIL.Image.open(ann_path))
+        out_file = None
+        if viz_dir is not None:
+            out_file = os.path.join(viz_dir,file)
         show_result(
             img_data,
             [ann_data],
             palette=PALETTE,
             show=True,
-            out_file=None)
+            out_file=out_file)
 
 
 if __name__=='__main__':
@@ -246,14 +271,16 @@ if __name__=='__main__':
     #               ann_dst_dir='/data4T/cuongnd/dataset/doc_structure1/ann_dir/train',
     #               ratio=0.002)
 
-    src_anno_dir='/data_backup/cuongnd/Viettel_freeform/MAFC/BHYT_origin/imgs/clean'
-    dst_anno_dir='/data_backup/cuongnd/mmseg/doc_seg/imgs/bhyt'
-    convert_all_imgs_to_jpg(src_anno_dir,dst_anno_dir)
+    # src_anno_dir='/data_backup/cuongnd/mmseg/doc_seg/imgs/test'
+    # dst_anno_dir='/data_backup/cuongnd/mmseg/doc_seg/imgs/test'
+    # convert_all_imgs_to_jpg(src_anno_dir,dst_anno_dir)
 
 
-    # img_dir='/data_backup/cuongnd/mmseg/doc_seg_data/imgs/train'
-    # ann_dir='/data_backup/cuongnd/mmseg/doc_seg_data/anno/train'
-    # visualize_normal_format_dataset(img_dir=img_dir,
-    #                                 ann_dir=ann_dir)
+    img_dir='/data_backup/cuongnd/mmseg/car_part/imgs/val'
+    ann_dir='/data_backup/cuongnd/mmseg/car_part/anno/val'
+    viz_dir = '/data_backup/cuongnd/mmseg/car_part/viz/val'
+    visualize_normal_format_dataset(img_dir=img_dir,
+                                    ann_dir=ann_dir,
+                                    viz_dir = viz_dir)
 
 
