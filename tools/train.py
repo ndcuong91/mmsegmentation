@@ -18,8 +18,8 @@ from mmseg.utils import collect_env, get_root_logger
 
 
 config_file = '../configs/pspnet/pspnet_r50-d8_640x640_20k_car_part.py'
-resume_from = 'work_dirs/fast_scnn_4x8_80k_lr0.12_publaynet_split1/iter_64000.pth'
-resume_from = None
+resume_from = 'work_dirs/pspnet_r50-d8_640x640_20k_car_part/iter_6000.pth'
+#resume_from = None
 load_from = '/home/cuongnd/PycharmProjects/open-mmlab/mmsegmentation/tools/work_dirs/pspnet_r50-d8_960x960_80k_publaynet_split1/iter_80000.pth'
 load_from = None
 

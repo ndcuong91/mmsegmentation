@@ -14,10 +14,10 @@ from mmseg.apis import multi_gpu_test, single_gpu_test
 from mmseg.datasets import build_dataloader, build_dataset
 from mmseg.models import build_segmentor
 
-config = '../configs/fastscnn/fast_scnn_4x8_80k_lr0.12_doc_seg.py'
-ckpt = '../work_dirs/fast_scnn_4x8_20k_lr0.12_doc_seg/iter_20000.pth'
+config = '/home/cuongnd/PycharmProjects/mmsegmentation/configs/pspnet/pspnet_r50-d8_640x640_20k_car_part.py'
+ckpt = '/home/cuongnd/PycharmProjects/mmsegmentation/tools/work_dirs/pspnet_r50-d8_640x640_20k_car_part/iter_6000.pth'
 show = True
-save_dir = '/data_backup/cuongnd/mmseg/doc_seg/viz/train'
+save_dir = '/data_backup/cuongnd/mmseg/car_part/viz/test'
 eval = 'mIoU'  # mIoU
 eval = None
 aug_test = False
